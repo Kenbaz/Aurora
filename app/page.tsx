@@ -3,13 +3,30 @@ import Image from "next/image";
 import { Inter } from "next/font/google";
 import { ChevronDown, Search, Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useState } from "react";
+import { useState, Suspense } from "react";
+import dynamic from "next/dynamic";
 
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
   display: "swap",
 });
+
+// Lazy load the video sections that are below the fold
+const VideoSection = dynamic(() => import("./VideoSection"), {
+  loading: () => (
+    <div className="w-full h-[40vh] bg-gray-900/20 animate-pulse rounded-lg" />
+  ),
+  ssr: false,
+});
+
+// Image placeholder component
+const ImagePlaceholder = ({ width, height, className }: { width: number; height: number; className?: string }) => (
+  <div
+    className={`bg-gray-700/30 animate-pulse ${className}`}
+    style={{ width, height }}
+  />
+);
 
 export default function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -49,12 +66,25 @@ export default function Home() {
         <header className="hidden lg:flex h-[7.69rem] w-full items-center px-[30px] justify-between">
           <div className="relative w-[7%]">
             <div className="ellipse absolute border -left-16 -top-[5rem] w-[300px] h-[250px]"></div>
-            <Image
-              src={"/images/image 1.png"}
-              alt="logo"
-              width={52.48}
-              height={37}
-            />
+            <Suspense
+              fallback={
+                <ImagePlaceholder
+                  width={52.48}
+                  height={37}
+                  className="rounded"
+                />
+              }
+            >
+              <Image
+                src={"/images/image 1.png"}
+                alt="logo"
+                width={52.48}
+                height={37}
+                priority // This logo should load first
+                placeholder="blur"
+                blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R+Wq/rNLr5bzW8gNveeV9ZyhMcLlsYleZKj8Vl6BVtWtxYfWp/EGg+qK1nTXH6Q4oXmxvlXrmGMUgfO6sWbVgqZHcxqO/bOhbqUjuL8WLvj4aDe7bOYHqpKdLEDQXo0K6K1TGKYrTslOjAIqEAhLZyJJJJ="
+              />
+            </Suspense>
           </div>
           <nav className="2xl:w-[50%] xl:w-[65%] lg:w-[68%]">
             <ul className="flex gap-[3%] items-center gradient-border relative w-[100%] h-[50px] rounded-[50px] px-[4%] justify-between">
@@ -82,24 +112,45 @@ export default function Home() {
           <div className="flex items-center relative justify-between w-[155px] h-[24px]">
             <div className="ellipse absolute -top-[7rem] -right-20 w-[300px] h-[300px]"></div>
             <Search width={24} height={24} />
-            <Image
-              src={"/images/Group.svg"}
-              alt="profile icon"
-              width={20}
-              height={20}
-            />
-            <Image
-              src={"/images/solar_heart-outline.svg"}
-              alt="heart icon"
-              width={24}
-              height={24}
-            />
-            <Image
-              src={"/images/proicons_cart.svg"}
-              alt="cart icon"
-              width={24}
-              height={24}
-            />
+            <Suspense
+              fallback={
+                <ImagePlaceholder width={20} height={20} className="rounded" />
+              }
+            >
+              <Image
+                src={"/images/Group.svg"}
+                alt="profile icon"
+                width={20}
+                height={20}
+                loading="lazy"
+              />
+            </Suspense>
+            <Suspense
+              fallback={
+                <ImagePlaceholder width={24} height={24} className="rounded" />
+              }
+            >
+              <Image
+                src={"/images/solar_heart-outline.svg"}
+                alt="heart icon"
+                width={24}
+                height={24}
+                loading="lazy"
+              />
+            </Suspense>
+            <Suspense
+              fallback={
+                <ImagePlaceholder width={24} height={24} className="rounded" />
+              }
+            >
+              <Image
+                src={"/images/proicons_cart.svg"}
+                alt="cart icon"
+                width={24}
+                height={24}
+                loading="lazy"
+              />
+            </Suspense>
           </div>
         </header>
 
@@ -114,24 +165,45 @@ export default function Home() {
 
           <div className="flex items-center gap-4">
             <Search width={20} height={20} className="text-white" />
-            <Image
-              src={"/images/Group.svg"}
-              alt="profile icon"
-              width={18}
-              height={18}
-            />
-            <Image
-              src={"/images/solar_heart-outline.svg"}
-              alt="heart icon"
-              width={20}
-              height={20}
-            />
-            <Image
-              src={"/images/proicons_cart.svg"}
-              alt="cart icon"
-              width={20}
-              height={20}
-            />
+            <Suspense
+              fallback={
+                <ImagePlaceholder width={18} height={18} className="rounded" />
+              }
+            >
+              <Image
+                src={"/images/Group.svg"}
+                alt="profile icon"
+                width={18}
+                height={18}
+                loading="lazy"
+              />
+            </Suspense>
+            <Suspense
+              fallback={
+                <ImagePlaceholder width={20} height={20} className="rounded" />
+              }
+            >
+              <Image
+                src={"/images/solar_heart-outline.svg"}
+                alt="heart icon"
+                width={20}
+                height={20}
+                loading="lazy"
+              />
+            </Suspense>
+            <Suspense
+              fallback={
+                <ImagePlaceholder width={20} height={20} className="rounded" />
+              }
+            >
+              <Image
+                src={"/images/proicons_cart.svg"}
+                alt="cart icon"
+                width={20}
+                height={20}
+                loading="lazy"
+              />
+            </Suspense>
           </div>
         </header>
 
@@ -166,12 +238,23 @@ export default function Home() {
                   <div className="flex items-center justify-between p-6 border-b border-white/10">
                     <div className="relative">
                       <div className="ellipse absolute -left-8 -top-8 w-[120px] h-[100px] opacity-30"></div>
-                      <Image
-                        src={"/images/image 1.png"}
-                        alt="logo"
-                        width={42}
-                        height={30}
-                      />
+                      <Suspense
+                        fallback={
+                          <ImagePlaceholder
+                            width={42}
+                            height={30}
+                            className="rounded"
+                          />
+                        }
+                      >
+                        <Image
+                          src={"/images/image 1.png"}
+                          alt="logo"
+                          width={42}
+                          height={30}
+                          loading="lazy"
+                        />
+                      </Suspense>
                     </div>
                     <button
                       onClick={toggleMenu}
@@ -264,104 +347,14 @@ export default function Home() {
         </div>
       </div>
 
-      <main className="main1 w-full -mt-[4%] relative lg:hidden min-h-[40vh] flex items-center justify-center px-4">
-        <div className="w-[56.19%] h-[30%] relative -left-[1.2vw]  md:w-[51.2vw] md:h-[19.5vh] md:top-[0.1vh] md:-left-[1.1vw] aspect-video border-2 border-black md:border-none">
-          <video
-            className="w-full h-full object-cover"
-            autoPlay
-            loop
-            muted
-            playsInline
-          >
-            <source src="/videos/Screen-recording.mp4" type="video/mp4" />
-          </video>
-          <Image
-            src={"/images/Frame 16.png"}
-            alt="artifact"
-            width={300}
-            height={33.37}
-            className="absolute hidden md:block rounded-[50px] left-[10%] -bottom-[5%]"
-          />
-          <Image
-            src={"/images/Frame 16.png"}
-            alt="artifact"
-            width={150}
-            height={33.37}
-            className="absolute md:hidden rounded-[50px] left-[10%] -bottom-[5%]"
-          />
-        </div>
-        <Image
-          src={"/images/Frame 17.svg"}
-          alt="artifact"
-          width={150}
-          height={60}
-          className="absolute hidden md:block rounded-md right-[8%] bottom-[10%]"
-        />
-      </main>
-
-      {/* lg screens Tablet */}
-      <main className="main w-full relative hidden lg:block xl:hidden lg:h-[40vh] lg:landscape:h-[75vh]">
-        <div className="relative lg:w-[53.5vw] lg:h-[21.8vh] lg:top-[9.2vh] lg:left-[22vw] lg:landscape:w-[50.95vw] lg:landscape:h-[47.1vh] lg:landscape:left-[23.3vw] lg:landscape:top-[14.2vh]">
-          <video
-            className="w-full h-full object-cover"
-            autoPlay
-            loop
-            muted
-            playsInline
-          >
-            <source src="/videos/Screen-recording.mp4" type="video/mp4" />
-          </video>
-          <Image
-            src={"/images/Frame 16.png"}
-            alt="artifact"
-            width={420}
-            height={33.37}
-            className="absolute rounded-[50px] left-[10%] -bottom-[5%]"
-          />
-        </div>
-        <Image
-          src={"/images/Frame 17.svg"}
-          alt="artifact"
-          width={150}
-          height={60}
-          className="absolute rounded-md lg:landscape:right-[5%] lg:right-[8%] bottom-[5%]"
-        />
-      </main>
-
-      <main className="main w-full hidden xl:block relative h-[40vh] 2xl:h-[100vh] xl:h-[82.45vh] ">
-        <div className="2xl:w-[50.5vw] 2xl:h-[59.5vh] relative 2xl:left-[23.1vw] 2xl:top-[20.5%] xl:w-[51.55vw] xl:h-[44.94vh] xl:left-[23.05vw] xl:top-[19vh] lg:w-[66.6vw] hidden xl:block">
-          <video
-            className="w-full h-full object-cover"
-            autoPlay
-            loop
-            muted
-            playsInline
-          >
-            <source src="/videos/Screen-recording.mp4" type="video/mp4" />
-          </video>
-          <Image
-            src={"/images/Frame 16.png"}
-            alt="artifact"
-            width={436.5}
-            height={33.37}
-            className="absolute rounded-[50px] left-[20%] -bottom-[5%]"
-          />
-        </div>
-        <Image
-          src={"/images/Frame 17.svg"}
-          alt="artifact"
-          width={213}
-          height={60}
-          className="absolute rounded-md right-[5%] bottom-[5%]"
-        />
-        <Image
-          src={"/images/ri_arrow-down-wide-fill.svg"}
-          alt="artifact"
-          width={61}
-          height={61}
-          className="absolute left-1/2 bottom-0 -translate-x-1/2 -translate-y-1/2"
-        />
-      </main>
+      {/* Lazy loaded video sections */}
+      <Suspense
+        fallback={
+          <div className="w-full h-[40vh] bg-gray-900/20 animate-pulse" />
+        }
+      >
+        <VideoSection />
+      </Suspense>
     </motion.div>
   );
 }
